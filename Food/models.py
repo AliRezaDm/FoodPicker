@@ -1,5 +1,6 @@
 from django.db import models
 from django.utils import html
+from .utils import ThumbnailMixin
 
 # Manager
 class CategoryQuerySet(models.QuerySet):
@@ -28,7 +29,7 @@ class Category(models.Model):
 
 
 
-class Ingredients(models.Model):
+class Ingredients(models.Model, ThumbnailMixin):
     
     name = models.CharField(max_length=200)
     slug = models.SlugField(max_length=50, unique=True)
@@ -38,11 +39,7 @@ class Ingredients(models.Model):
     def __str__(self):
          return self.name
     
-    def thumbnail_tag(self):
-        if self.thumbnail:
-            return html.format_html("<img width=100; height=100, style='border-radius: 10px;' \
-                                                       src='{}'>", self.thumbnail.url)
-        return 'No Image'
+
     
     class Meta:
         verbose_name = 'Ingredient'
@@ -51,7 +48,7 @@ class Ingredients(models.Model):
 
 
 
-class Recipe(models.Model):
+class Recipe(models.Model, ThumbnailMixin):
     
     name = models.CharField(max_length=200)
     slug = models.SlugField(max_length=50 , unique=True)
@@ -62,12 +59,6 @@ class Recipe(models.Model):
 
     def __str__(self):
          return self.name
-   
-    def thumbnail_tag(self):
-        if self.thumbnail:
-            return html.format_html("<img width=100; height=100, style='border-radius: 10px;' \
-                                                       src='{}'>", self.thumbnail.url)
-        return 'No Image'
     
     class Meta:
         verbose_name = 'Recipe'
@@ -75,7 +66,7 @@ class Recipe(models.Model):
         ordering = ['name']
 
 
-class FoodImages(models.Model):
+class FoodImages(models.Model, ThumbnailMixin):
      
     recipe = models.ForeignKey(Recipe, related_name = 'gallary_image', on_delete=models.CASCADE)
     image = models.ImageField(upload_to='media/recipe/gallary')
@@ -84,12 +75,6 @@ class FoodImages(models.Model):
      
     def __str__(self):
           return f'image for {self.recipe.name}'
-
-    def thumbnail_tag(self):
-        if self.image:
-            return html.format_html("<img width=100; height=100, style='border-radius: 10px;' \
-                                                       src='{}'>", self.image.url)
-        return 'No Image'
 
     class Meta:
         verbose_name = 'Image'

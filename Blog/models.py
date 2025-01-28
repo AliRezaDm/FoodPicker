@@ -1,5 +1,5 @@
 from django.db import models
-from django.utils import html 
+from Food.utils import ThumbnailMixin
 
 
 # Manager
@@ -29,7 +29,7 @@ class Category(models.Model):
     objects = CategoryQuerySet.as_manager()
 
 
-class Article(models.Model):
+class Article(models.Model, ThumbnailMixin):
 
     title = models.CharField(max_length=200)
     slug = models.SlugField(unique=True, max_length=50)
@@ -42,14 +42,7 @@ class Article(models.Model):
 
     def __str__(self):
         return self.title
-    
-    def thumbnail_tag(self):
-        #checks for the existence of thumbnail before hand
-        if self.thumbnail:
-            return html.format_html("<img width=100; height=100, style='border-radius: 10px;' \
-                                                    src='{}'>", self.thumbnail.url)
-        return 'No Image'
-    
+
 
     class Meta:
         verbose_name = 'Article'
