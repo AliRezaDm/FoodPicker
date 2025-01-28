@@ -10,9 +10,13 @@ class CategoryQuerySet(models.QuerySet):
 
 class Category(models.Model):
 
+    TYPE_CHOICES = (('I', 'Ingredients'), 
+                    ('R', 'Recipe'))
+
     parent = models.ForeignKey('self', on_delete=models.SET_NULL, related_name='sub_category', null=True, blank=True)
     title = models.CharField(max_length=100)
     slug = models.SlugField(max_length=50 , unique=True)
+    type =  models.CharField(max_length=2, choices=TYPE_CHOICES)
     status = models.BooleanField(default=True)
 
     # initializing the manager
