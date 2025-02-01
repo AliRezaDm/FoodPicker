@@ -1,6 +1,7 @@
 from django.db import models
 from django.utils import html
 from .utils import ThumbnailMixin
+from django_countries.fields import CountryField
 
 # Manager
 class CategoryQuerySet(models.QuerySet):
@@ -53,13 +54,18 @@ class Ingredients(models.Model, ThumbnailMixin):
 
 
 class Recipe(models.Model, ThumbnailMixin):
+
+    STATUS_CHOICES = (('D', 'Draft'), 
+                      ('P', 'Published'))
     
     name = models.CharField(max_length=200)
     slug = models.SlugField(max_length=50 , unique=True)
     category = models.ManyToManyField(Category, related_name="food_category")
     ingredients = models.ManyToManyField(Ingredients, related_name="food_ingredients")
+    country = CountryField()  
     description = models.TextField()
     thumbnail = models.ImageField(upload_to="media/recipe/")
+    status = models.CharField(max_length=2, choices=STATUS_CHOICES)
 
     def __str__(self):
          return self.name
