@@ -62,10 +62,10 @@ class Recipe(models.Model, ThumbnailMixin):
     slug = models.SlugField(max_length=50 , unique=True)
     category = models.ManyToManyField(Category, related_name="food_category")
     ingredients = models.ManyToManyField(Ingredients, related_name="food_ingredients")
-    country = CountryField()  
+    country = CountryField(blank=True)  
     description = models.TextField()
     thumbnail = models.ImageField(upload_to="media/recipe/")
-    status = models.CharField(max_length=2, choices=STATUS_CHOICES)
+    status = models.CharField(max_length=2, choices=STATUS_CHOICES, default=STATUS_CHOICES[0][0])
 
     def __str__(self):
          return self.name
