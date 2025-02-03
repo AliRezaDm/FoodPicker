@@ -42,7 +42,10 @@ INSTALLED_APPS = [
     'Blog.apps.BlogConfig',
     'Food.apps.FoodConfig',
     'User.apps.UserConfig',
-    'Comment.apps.CommentConfig'
+    'Comment.apps.CommentConfig',
+
+    'rest_framework',
+    'drf_spectacular'
 
 ]
 
@@ -105,6 +108,21 @@ AUTH_PASSWORD_VALIDATORS = [
         'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
     },
 ]
+
+# DRF SETTINGS
+REST_FRAMEWORK = {
+    'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
+}
+
+SPECTACULAR_SETTINGS = {
+    'TITLE': 'FoodPicker API',
+    'DESCRIPTION': 'API documentation for the FoodPicker app',
+    'VERSION': '1.0.0',
+    'SERVE_INCLUDE_SCHEMA': False,
+}
+
+
+
 
 
 # Internationalization
