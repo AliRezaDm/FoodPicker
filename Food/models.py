@@ -11,8 +11,10 @@ class CategoryQuerySet(models.QuerySet):
 
 class Category(models.Model):
 
-    TYPE_CHOICES = (('I', 'Ingredients'), 
-                    ('R', 'Recipe'))
+    Ingredients = 'I'
+    Recipe = 'R'
+    TYPE_CHOICES = ((Ingredients, 'Ingredients'), 
+                    (Recipe, 'Recipe'))
 
     parent = models.ForeignKey('self', on_delete=models.SET_NULL, related_name='sub_category', null=True, blank=True)
     title = models.CharField(max_length=100)
@@ -55,8 +57,10 @@ class Ingredients(models.Model, ThumbnailMixin):
 
 class Recipe(models.Model, ThumbnailMixin):
 
-    STATUS_CHOICES = (('D', 'Draft'), 
-                      ('P', 'Published'))
+    DRAFT = 'D'
+    PUBLISHED = 'P'
+    STATUS_CHOICES = [(DRAFT, 'Draft'), 
+                      (PUBLISHED, 'Published')]
     
     name = models.CharField(max_length=200)
     slug = models.SlugField(max_length=50 , unique=True)
@@ -65,7 +69,7 @@ class Recipe(models.Model, ThumbnailMixin):
     country = CountryField(blank=True)  
     description = models.TextField()
     thumbnail = models.ImageField(upload_to="media/recipe/")
-    status = models.CharField(max_length=2, choices=STATUS_CHOICES, default=STATUS_CHOICES[0][0])
+    status = models.CharField(max_length=2, choices=STATUS_CHOICES, default=DRAFT)
 
     def __str__(self):
          return self.name
