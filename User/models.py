@@ -3,7 +3,9 @@ from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, Permis
 
 
 class CustomUserManager(BaseUserManager):
-
+    """custom manager for User creates user via email for 
+    username and checks if the user inputs all the required fields"""
+   
     def create_user(self, email, password, name, **extra_fields):
 
         if not email:
@@ -29,7 +31,7 @@ class CustomUserManager(BaseUserManager):
 
 
 def user_avatar_path(instance, filename):
-    """ Dynamic path to store user avatar"""
+    """ Dynamic path to store user avatar to avoid conflict for similar file name"""
     return f'media/User/{instance.email}/avatar/{filename}'
 
 
@@ -44,7 +46,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     is_staff = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
 
-    # to avoid clash with django user model
+    # to avoid conflict with django user model
     groups = models.ManyToManyField('auth.Group', related_name='custom_user_groups', blank=True)
     user_permissions = models.ManyToManyField('auth.Permission', related_name='custom_user_permissions', blank=True)
 

@@ -9,7 +9,7 @@ class CommentQuerySet(models.QuerySet):
 
 class Comment(models.Model):
 
-
+ 
     DRAFT = 'D'
     PUBLISHED = 'P'
     STATUS_CHOICES = [(DRAFT, 'Draft'), 

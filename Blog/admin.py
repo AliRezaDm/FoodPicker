@@ -8,7 +8,7 @@ class CategoryAdmin(admin.ModelAdmin):
 
     list_display = ['name', 'slug']
     search_fields = ['name']
-    prepopulated_fields = {'slug':('name',)}
+
 
 @admin.register(Article)
 class ArticleAdmin(admin.ModelAdmin):
@@ -16,7 +16,6 @@ class ArticleAdmin(admin.ModelAdmin):
     list_display = ['title', 'category_name', 'thumbnail_tag', 'created', 'updated']
     readonly_fields = ('thumbnail_tag',)
     search_fields = ['title', 'category_name']
-    prepopulated_fields = {'slug':('title',)}
 
 
     #to display category name

@@ -1,5 +1,7 @@
 from django.db import models
+from django.utils.text import slugify
 from Food.utils import ThumbnailMixin
+
 
 
 # Manager
@@ -19,6 +21,13 @@ class Category(models.Model):
     def __str__(self):
         return self.name
     
+    
+    def save(self, *args, **kwargs):
+        if not self.slug:
+            self.slug = slugify(self.name)
+        return super().save(**args, **kwargs)
+    
+    
     class Meta:
         verbose_name = 'Category'
         verbose_name_plural = 'Categories'
@@ -37,11 +46,19 @@ class Article(models.Model, ThumbnailMixin):
     description = models.TextField()
     status = models.BooleanField(default = True)
     thumbnail = models.ImageField(upload_to='media/blog/')   
-    created = models.DateTimeField(auto_now_add=True)
-    updated = models.DateTimeField(auto_now=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
 
     def __str__(self):
         return self.title
+    # handling creating slug in the model instead of API 
+    # it get created automatically across the app not just in the API
+    def save(self, *args, **kwargs):
+        #checks if there is no slug creates one
+        if not self.slug:
+            self.slug = slugify(self.title)    
+        super().save(*args, **kwargs)
+
 
 
     class Meta:

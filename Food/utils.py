@@ -2,6 +2,7 @@ from django.utils import html
 
 
 class ThumbnailMixin:
+    """ a mixing to avoid repeating the thumbnail tag method in each model"""
     def thumbnail_tag(self):
         if hasattr(self, 'thumbnail') and self.thumbnail:
                         return html.format_html(
