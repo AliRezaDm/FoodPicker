@@ -1,7 +1,22 @@
 from django.db import models
 from django.utils import html
+from django.utils.text import slugify
 from .utils import ThumbnailMixin
 from django_countries.fields import CountryField
+
+class BaseModel(models.Model):
+    """ a base model contianing slug to make sure same field does not get repeated in each model """
+    slug = models.SlugField(max_length=50, unique=True)
+    # to create slug automatically 
+    def save(self, *args, **kwargs):
+        # checks if the model has a field called name, then create the slug based on name field
+        if not self.slug and hasattr(self, 'name'):
+            self.slug = slugify(self.name)
+        return super().save(**args, **kwargs)
+    
+    class Meta:
+        abstract = True
+
 
 # Manager
 class CategoryQuerySet(models.QuerySet):
@@ -9,7 +24,7 @@ class CategoryQuerySet(models.QuerySet):
         return self.filter(status=True)
 
 
-class Category(models.Model):
+class Category(BaseModel):
 
     Ingredients = 'I'
     Recipe = 'R'
@@ -17,8 +32,7 @@ class Category(models.Model):
                     (Recipe, 'Recipe'))
 
     parent = models.ForeignKey('self', on_delete=models.SET_NULL, related_name='sub_category', null=True, blank=True)
-    title = models.CharField(max_length=100)
-    slug = models.SlugField(max_length=50 , unique=True)
+    name = models.CharField(max_length=100)
     type =  models.CharField(max_length=2, choices=TYPE_CHOICES)
     status = models.BooleanField(default=True)
 
@@ -36,10 +50,9 @@ class Category(models.Model):
 
 
 
-class Ingredients(models.Model, ThumbnailMixin):
+class Ingredients(BaseModel, ThumbnailMixin):
     
     name = models.CharField(max_length=200)
-    slug = models.SlugField(max_length=50, unique=True)
     category = models.ForeignKey(Category, related_name="ingredients_category", on_delete=models.CASCADE)
     thumbnail = models.ImageField(upload_to='media/ingredients/')
   
@@ -55,7 +68,7 @@ class Ingredients(models.Model, ThumbnailMixin):
 
 
 
-class Recipe(models.Model, ThumbnailMixin):
+class Recipe(BaseModel, ThumbnailMixin):
 
     DRAFT = 'D'
     PUBLISHED = 'P'
@@ -63,7 +76,6 @@ class Recipe(models.Model, ThumbnailMixin):
                       (PUBLISHED, 'Published')]
     
     name = models.CharField(max_length=200)
-    slug = models.SlugField(max_length=50 , unique=True)
     category = models.ManyToManyField(Category, related_name="food_category")
     ingredients = models.ManyToManyField(Ingredients, related_name="food_ingredients")
     country = CountryField(blank=True)  
@@ -84,7 +96,9 @@ class FoodImages(models.Model, ThumbnailMixin):
      
     recipe = models.ForeignKey(Recipe, related_name = 'gallary_image', on_delete=models.CASCADE)
     image = models.ImageField(upload_to='media/recipe/gallary')
+    # to set the order of image display manually 
     order = models.PositiveBigIntegerField(default=0, unique=True)
+    # optional caption for each image 
     caption = models.CharField(max_length=100, blank=True, null=True)
      
     def __str__(self):
